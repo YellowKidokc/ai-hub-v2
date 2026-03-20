@@ -1337,6 +1337,8 @@ class TheophysicsNormalizer:
         script_dir = os.path.dirname(__file__)
         parent_dir = os.path.dirname(script_dir)
         candidates = [
+            "MATH_TRANSLATION_MASTER_FIXED.xlsx",
+            os.path.join(script_dir, "MATH_TRANSLATION_MASTER_FIXED.xlsx"),
             "MATH_TRANSLATION_MASTER.xlsx",
             os.path.join(script_dir, "MATH_TRANSLATION_MASTER.xlsx"),
             os.path.join(parent_dir, "config", "MATH_TRANSLATION_MASTER.xlsx"),

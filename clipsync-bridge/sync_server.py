@@ -1051,8 +1051,16 @@ def main():
         monitor.start()
         print("[clipboard] Monitor started")
 
-    # Start HTTP server
-    server = HTTPServer(("127.0.0.1", PORT), BridgeHandler)
+    # Start HTTP server — suppress noisy ConnectionResetError from polling clients
+    class QuietHTTPServer(HTTPServer):
+        def handle_error(self, request, client_address):
+            import sys
+            exc = sys.exc_info()[1]
+            if isinstance(exc, ConnectionResetError):
+                return  # silently ignore client disconnects
+            super().handle_error(request, client_address)
+
+    server = QuietHTTPServer(("127.0.0.1", PORT), BridgeHandler)
     print(f"\n[server] Listening on http://localhost:{PORT}\n")
 
     try:

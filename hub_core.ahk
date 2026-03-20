@@ -301,13 +301,10 @@ SetupTray() {
     A_TrayMenu.Add("Show GUI", (*) => ShowGui())
     A_TrayMenu.Add("Hide GUI", (*) => HideGui())
     A_TrayMenu.Add()
-    A_TrayMenu.Add("Show Clipboard", (*) => CB_TrayShow())
+    A_TrayMenu.Add("Clipboard", (*) => LaunchHtmlPanel("http://localhost:3456/clipboard", "POF-Clipboard"))
+    A_TrayMenu.Add("Prompts", (*) => LaunchHtmlPanel("http://localhost:3456/prompts", "POF-Prompts"))
+    A_TrayMenu.Add("Links", (*) => LaunchHtmlPanel("http://localhost:3456/links", "POF-Links"))
     A_TrayMenu.Add("Show BetterTTS", (*) => TTS_TrayShow())
-    A_TrayMenu.Add()
-    A_TrayMenu.Add("Clipboard (HTML)", (*) => LaunchHtmlPanel("http://localhost:3456/clipboard3", "POF-Clipboard"))
-    A_TrayMenu.Add("Prompts (HTML)", (*) => LaunchHtmlPanel("http://localhost:3456/prompts", "POF-Prompts"))
-    A_TrayMenu.Add("Links (HTML)", (*) => LaunchHtmlPanel("http://localhost:3456/links", "POF-Links"))
-    A_TrayMenu.Add("Hide Clipboard", (*) => CB_TrayHide())
     A_TrayMenu.Add()
     A_TrayMenu.Add("Always On Top", TrayToggleAOT)
     A_TrayMenu.Add()
@@ -324,25 +321,6 @@ TrayToggleAOT(*) {
         A_TrayMenu.Uncheck("Always On Top")
 }
 
-CB_TrayShow(*) {
-    try {
-        DetectHiddenWindows(true)
-        if WinExist("Clipboard ahk_class AutoHotkeyGUI")
-            WinShow("Clipboard ahk_class AutoHotkeyGUI")
-        else
-            Run(A_ScriptDir "\clipboard\Clipboard.ahk")
-        DetectHiddenWindows(false)
-    }
-}
-
-CB_TrayHide(*) {
-    try {
-        DetectHiddenWindows(true)
-        if WinExist("Clipboard ahk_class AutoHotkeyGUI")
-            WinHide("Clipboard ahk_class AutoHotkeyGUI")
-        DetectHiddenWindows(false)
-    }
-}
 
 TTS_TrayShow(*) {
     try {

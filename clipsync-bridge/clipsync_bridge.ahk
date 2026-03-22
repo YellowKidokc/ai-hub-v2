@@ -29,6 +29,10 @@ global BRIDGE_POLL_INTERVAL := 30000  ; ms between hotkey refresh
 global BRIDGE_REGISTERED_HOTKEYS := Map()
 
 ; ---- Static Hotkeys ----
+; NOTE: ^!p, ^!c are already registered in hub_core.ahk
+; Only register hotkeys here that are NOT in hub_core
+^!r::OpenBridgePage("/links")
+^!s::ShowBridgeStatus()
 
 ; ---- Dynamic Hotkey System ----
 

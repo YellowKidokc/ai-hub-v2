@@ -9,6 +9,7 @@
 ;   Ctrl+Shift+V      = Open clipboard HTML
 ;   Ctrl+Shift+1-0    = Fast paste slots 1-10
 ;   Ctrl+Alt+1-0      = Fast paste slots 11-20
+;   Ctrl+Shift+S      = Slot picker (any slot 1-99)
 ; ============================================================
 
 #Requires AutoHotkey v2.0+
@@ -192,6 +193,40 @@ CB_FastPaste(slot) {
 }
 
 ; ============================================================
+; SLOT PICKER — for slots 21-99 (and quick access to any slot)
+; ============================================================
+
+CB_SlotPicker() {
+    global CB_SLOT_CACHE, CB_SERVER_ONLINE
+    if !CB_SERVER_ONLINE {
+        ToolTip("⚠ ClipSync server offline — start sync_server.py")
+        SetTimer(() => ToolTip(), -2500)
+        return
+    }
+
+    ; Build list of filled slots for display
+    filled := ""
+    for key, val in CB_SLOT_CACHE {
+        preview := SubStr(val, 1, 40)
+        preview := StrReplace(preview, "`n", " ")
+        filled .= key ": " preview "`n"
+    }
+    if filled = ""
+        filled := "(no slots filled)"
+
+    ib := InputBox("Type slot number (1-99) to paste:`n`n" filled, "Slot Picker", "w320 h400")
+    if ib.Result = "Cancel"
+        return
+    slot := Integer(ib.Value)
+    if slot < 1 || slot > 99 {
+        ToolTip("⚠ Invalid slot: " ib.Value)
+        SetTimer(() => ToolTip(), -1500)
+        return
+    }
+    CB_FastPaste(slot)
+}
+
+; ============================================================
 ; HOTKEYS
 ; ============================================================
 
@@ -241,6 +276,9 @@ CB_FastPaste(slot) {
 ^!8:: CB_FastPaste(18)
 ^!9:: CB_FastPaste(19)
 ^!0:: CB_FastPaste(20)
+
+; Slot picker: Ctrl+Shift+S = pick any slot 1-99
+^+s:: CB_SlotPicker()
 
 ; ---- Refresh cache periodically ----
 CB_RefreshCache()

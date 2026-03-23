@@ -2,7 +2,7 @@
 ; CLIPBOARD MONITOR — Headless bridge to ClipSync
 ; ============================================================
 ; Watches system clipboard → pushes to Python server
-; Fast paste hotkeys read from server
+; Fast paste hotkeys read from server BY SLOT NUMBER
 ; GUI is HTML (localhost:3456/clipboard)
 ;
 ; Hotkeys:
@@ -20,7 +20,8 @@ global CB_AGG_WINDOW := 2000        ; ms
 global CB_AGG_BUFFER := ""
 global CB_AGG_COUNT := 0
 global CB_AGG_LAST := 0
-global CB_CLIP_CACHE := []          ; Local cache for fast paste
+global CB_SLOT_CACHE := Map()       ; Slot number → content
+global CB_SERVER_ONLINE := false
 
 ; ---- Clipboard monitoring ----
 OnClipboardChange(CB_Bridge_OnChange)
@@ -95,32 +96,47 @@ CB_PushToServer(text, source) {
     }
 }
 
-; ---- Refresh local cache for fast paste ----
+; ---- Refresh slot cache — builds map of slot# → content ----
 CB_RefreshCache() {
-    global CB_BRIDGE_URL, CB_CLIP_CACHE
+    global CB_BRIDGE_URL, CB_SLOT_CACHE, CB_SERVER_ONLINE
     try {
         whr := ComObject("WinHttp.WinHttpRequest.5.1")
-        whr.Open("GET", CB_BRIDGE_URL "/api/clips?limit=20", true)
+        whr.Open("GET", CB_BRIDGE_URL "/api/clips/slots", true)
         whr.Send()
-        whr.WaitForResponse(2)
+        whr.WaitForResponse(3)
         if whr.Status = 200 {
-            ; Parse simple JSON array of clips
-            CB_CLIP_CACHE := CB_ParseClipArray(whr.ResponseText)
+            CB_SERVER_ONLINE := true
+            CB_SLOT_CACHE := CB_ParseSlotMap(whr.ResponseText)
+        } else {
+            CB_SERVER_ONLINE := false
         }
     } catch {
-        ; Server offline
+        CB_SERVER_ONLINE := false
     }
 }
 
-CB_ParseClipArray(jsonStr) {
-    results := []
+; Parse JSON object like {"1":"content","2":"content",...}
+CB_ParseSlotMap(jsonStr) {
+    result := Map()
     pos := 1
-    while pos := InStr(jsonStr, '"content":', , pos) {
-        ; Find the content value
-        valStart := InStr(jsonStr, '"', , pos + 10)
-        if valStart = 0
+    while pos := InStr(jsonStr, '"', , pos) {
+        ; Get key
+        keyStart := pos + 1
+        keyEnd := InStr(jsonStr, '"', , keyStart)
+        if keyEnd = 0
             break
-        valStart++  ; skip opening quote
+        key := SubStr(jsonStr, keyStart, keyEnd - keyStart)
+
+        ; Find colon then value
+        colonPos := InStr(jsonStr, ":", , keyEnd)
+        if colonPos = 0
+            break
+
+        ; Find opening quote of value
+        valQuote := InStr(jsonStr, '"', , colonPos)
+        if valQuote = 0
+            break
+        valStart := valQuote + 1
 
         ; Find end of string (handle escapes)
         valEnd := valStart
@@ -136,7 +152,7 @@ CB_ParseClipArray(jsonStr) {
                 check--
             }
             if Mod(bs, 2) = 0
-                break  ; Not escaped, this is the real end
+                break  ; Not escaped
             valEnd++
         }
 
@@ -147,19 +163,28 @@ CB_ParseClipArray(jsonStr) {
             val := StrReplace(val, "\t", "`t")
             val := StrReplace(val, "\`"", "`"")
             val := StrReplace(val, "\\", "\")
-            results.Push(val)
+            result[key] := val
         }
 
         pos := valEnd + 1
     }
-    return results
+    return result
 }
 
 CB_FastPaste(slot) {
-    global CB_CLIP_CACHE
-    if slot < 1 || slot > CB_CLIP_CACHE.Length
+    global CB_SLOT_CACHE, CB_SERVER_ONLINE
+    if !CB_SERVER_ONLINE {
+        ToolTip("⚠ ClipSync server offline — start sync_server.py")
+        SetTimer(() => ToolTip(), -2500)
         return
-    A_Clipboard := CB_CLIP_CACHE[slot]
+    }
+    slotKey := String(slot)
+    if !CB_SLOT_CACHE.Has(slotKey) {
+        ToolTip("📋 Slot " slot " is empty")
+        SetTimer(() => ToolTip(), -1500)
+        return
+    }
+    A_Clipboard := CB_SLOT_CACHE[slotKey]
     ClipWait(0.5)
     Send("^v")
     ToolTip("📋 Slot " slot)

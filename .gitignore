@@ -15,6 +15,19 @@ clipsync-bridge/data/*.json
 clipboard/config/clipboard_data.json
 clipboard/config/clipboard_settings.ini
 
+# Build artifacts
+dist/
+
+# Backup files
+*.bak
+
+# BetterTTS user settings
+BetterTTS/settings.ini
+
+# Test artifacts
+BetterTTS/normalizer/test_*.txt
+BetterTTS/normalizer/master_contents.txt
+
 # Python
 __pycache__/
 *.pyc

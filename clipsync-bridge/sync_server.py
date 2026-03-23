@@ -693,6 +693,13 @@ class DataStore:
             for p in self.prompts if p.get("hotkey")
         ]
 
+    def get_slot_map(self):
+        """Returns a dict of slot_number → content for all slotted clips."""
+        return {
+            str(c["slot"]): c["content"]
+            for c in self.clips if c.get("slot")
+        }
+
 
 # ---------------------------------------------------------------------------
 # CLIPBOARD MONITOR (Windows only, graceful fallback)
@@ -841,6 +848,9 @@ class BridgeHandler(SimpleHTTPRequestHandler):
         if path == "/api/bookmarks":
             category = params.get("category", [None])[0]
             return self._json_response(store.get_bookmarks(category))
+
+        if path == "/api/clips/slots":
+            return self._json_response(store.get_slot_map())
 
         if path == "/api/clips":
             search = params.get("search", [None])[0]

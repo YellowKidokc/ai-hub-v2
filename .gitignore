@@ -15,6 +15,9 @@ clipsync-bridge/data/*.json
 clipboard/config/clipboard_data.json
 clipboard/config/clipboard_settings.ini
 
+# Sync server runtime data (SQLite DB, window state)
+Data/
+
 # Build artifacts
 dist/
 

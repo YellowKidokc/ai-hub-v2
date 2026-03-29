@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Comms Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#08080c;--surface:#0e0e14;--surface2:#151520;
+  --card:#13131b;--card-hover:#1a1a24;
+  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
+  --text:#b8bcc6;--dim:#6a6a80;--bright:#dde0e8;
+  --gold:#e8a912;--green:#2ecc8e;--red:#d44;--blue:#4F8EF7;--purple:#9B7FE8;--cyan:#4ac4d4;
+  --mono:'Consolas','DM Mono',monospace;--sans:'Segoe UI','DM Sans',sans-serif;
+  --radius:6px;
+}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#222230;border-radius:3px;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--sans);font-size:13px;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:var(--surface);border-bottom:1px solid var(--border);}
+.topbar h1{font-size:14px;color:var(--bright);font-weight:600;letter-spacing:.5px;}
+.topbar .status{font-size:11px;color:var(--dim);font-family:var(--mono);}
+.topbar .status.live{color:var(--green);}
+
+/* MAIN LAYOUT */
+.main{flex:1;display:flex;overflow:hidden;}
+
+/* MASTER LOG (left panel) */
+.master-log{width:45%;border-right:1px solid var(--border);display:flex;flex-direction:column;}
+.panel-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;display:flex;justify-content:space-between;align-items:center;}
+.panel-header .count{font-family:var(--mono);color:var(--cyan);font-size:11px;}
+.log-entries{flex:1;overflow-y:auto;padding:8px;}
+
+.log-entry{display:flex;gap:8px;padding:8px 10px;border-radius:var(--radius);margin-bottom:4px;transition:background .12s;align-items:flex-start;}
+.log-entry:hover{background:var(--card-hover);}
+.log-entry.done{opacity:.4;}
+.log-entry .checkbox{flex-shrink:0;width:16px;height:16px;border:1px solid var(--border2);border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .12s;}
+.log-entry .checkbox:hover{border-color:var(--green);}
+.log-entry .checkbox.checked{background:var(--green);border-color:var(--green);color:#000;font-size:10px;}
+.log-entry .time{font-family:var(--mono);font-size:10px;color:var(--dim);flex-shrink:0;min-width:55px;margin-top:2px;}
+.log-entry .sender{font-size:11px;font-weight:600;flex-shrink:0;min-width:90px;margin-top:1px;}
+.log-entry .msg{font-size:12px;color:var(--text);line-height:1.4;word-break:break-word;}
+.log-entry.interrupt{border-left:3px solid var(--red);}
+.log-entry.ding{border-left:3px solid var(--gold);}
+.log-entry.milestone{border-left:3px solid var(--green);}
+
+/* AGENT PANELS (right side) */
+.agents-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.agent-panels{flex:1;overflow-y:auto;padding:8px;}
+.agent-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
+.agent-card .agent-header{padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.agent-card .agent-name{font-weight:600;font-size:12px;color:var(--bright);}
+.agent-card .agent-status{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:10px;background:var(--green);color:#000;}
+.agent-card .agent-status.idle{background:var(--dim);color:#fff;}
+.agent-card .agent-messages{padding:8px 12px;max-height:150px;overflow-y:auto;}
+.agent-card .agent-msg{font-size:11px;color:var(--text);margin-bottom:4px;padding:4px 0;border-bottom:1px solid var(--border);}
+.agent-card .agent-msg:last-child{border-bottom:none;}
+.agent-card .agent-msg .agent-msg-time{font-family:var(--mono);font-size:9px;color:var(--dim);margin-right:6px;}
+
+/* BROADCAST INPUT (bottom) */
+.broadcast-bar{padding:10px 14px;background:var(--surface);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;}
+.broadcast-bar input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px;color:var(--bright);font-size:12px;font-family:var(--sans);outline:none;}
+.broadcast-bar input:focus{border-color:var(--blue);}
+.broadcast-bar input::placeholder{color:var(--dim);}
+.broadcast-bar button{padding:8px 16px;border:none;border-radius:var(--radius);font-size:11px;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .12s;}
+.btn-interrupt{background:var(--red);color:#fff;}
+.btn-interrupt:hover{filter:brightness(1.2);}
+.btn-ding{background:var(--gold);color:#000;}
+.btn-ding:hover{filter:brightness(1.1);}
+.btn-send{background:var(--blue);color:#fff;}
+.btn-send:hover{filter:brightness(1.2);}
+
+/* DM modal */
+.dm-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;}
+.dm-modal.show{display:flex;}
+.dm-box{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:20px;width:400px;}
+.dm-box h3{color:var(--bright);margin-bottom:12px;font-size:14px;}
+.dm-box input,.dm-box textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px;color:var(--bright);font-size:12px;font-family:var(--sans);outline:none;margin-bottom:8px;}
+.dm-box textarea{height:80px;resize:vertical;}
+.dm-box .dm-actions{display:flex;gap:8px;justify-content:flex-end;}
+.dm-box button{padding:6px 14px;border:none;border-radius:var(--radius);font-size:11px;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>COMMS DASHBOARD — POF 2828</h1>
+  <div class="status" id="connStatus">CONNECTING...</div>
+</div>
+
+<div class="main">
+  <!-- MASTER LOG -->
+  <div class="master-log">
+    <div class="panel-header">
+      Master Log <span class="count" id="logCount">0 messages</span>
+    </div>
+    <div class="log-entries" id="logEntries"></div>
+  </div>
+
+  <!-- AGENT PANELS -->
+  <div class="agents-area">
+    <div class="panel-header">
+      Active Agents <span class="count" id="agentCount">0 agents</span>
+    </div>
+    <div class="agent-panels" id="agentPanels"></div>
+  </div>
+</div>
+
+<!-- BROADCAST BAR -->
+<div class="broadcast-bar">
+  <input type="text" id="broadcastInput" placeholder="Type a message to all agents..." />
+  <button class="btn-ding" onclick="sendBroadcast('ding')">Ding</button>
+  <button class="btn-interrupt" onclick="sendBroadcast('interrupt')">Interrupt</button>
+</div>
+
+<!-- DM MODAL -->
+<div class="dm-modal" id="dmModal">
+  <div class="dm-box">
+    <h3>Direct Message → <span id="dmTarget"></span></h3>
+    <textarea id="dmMessage" placeholder="Your message..."></textarea>
+    <div class="dm-actions">
+      <button style="background:var(--dim);color:#fff;" onclick="closeDM()">Cancel</button>
+      <button style="background:var(--blue);color:#fff;" onclick="sendDM()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COMMS_URL = 'https://comms.faiththruphysics.com';
+const TOKEN = 'theophysics-opus-2026';
+const POLL_INTERVAL = 5000;
+
+let allMessages = [];
+let knownAgents = new Map(); // name -> {messages, lastSeen}
+let checkedMessages = new Set(); // message IDs marked done
+let dmTargetAgent = '';
+
+// Load checked state from localStorage
+try {
+  const saved = localStorage.getItem('comms_checked');
+  if (saved) checkedMessages = new Set(JSON.parse(saved));
+} catch(e) {}
+
+async function fetchMessages() {
+  try {
+    const res = await fetch(`${COMMS_URL}/broadcast`, {
+      headers: { 'Authorization': `Bearer ${TOKEN}` }
+    });
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+
+    document.getElementById('connStatus').textContent = 'LIVE';
+    document.getElementById('connStatus').classList.add('live');
+
+    // data might be array or object with messages property
+    const msgs = Array.isArray(data) ? data : (data.messages || []);
+    allMessages = msgs;
+    extractAgents(msgs);
+    renderLog(msgs);
+    renderAgents();
+  } catch(e) {
+    document.getElementById('connStatus').textContent = 'ERROR: ' + e.message;
+    document.getElementById('connStatus').classList.remove('live');
+  }
+}
+
+function extractAgents(msgs) {
+  for (const m of msgs) {
+    const content = m.content || '';
+    // Extract agent name from content patterns like "FRIEND 1", "FRIEND A", "[DAVID]", agent names
+    let sender = 'Unknown';
+    const friendMatch = content.match(/^(FRIEND\s+\w+)/i);
+    const davidMatch = content.match(/^\[DAVID[^\]]*\]/i);
+    const namedMatch = content.match(/^(\w[\w\s]{2,20})(?:\s+(?:COMPLETE|starting|DONE|reporting))/i);
+
+    if (davidMatch) sender = 'DAVID';
+    else if (friendMatch) sender = friendMatch[1].toUpperCase();
+    else if (namedMatch) sender = namedMatch[1].trim().toUpperCase();
+    else if (m.from) sender = m.from.toUpperCase();
+
+    if (!knownAgents.has(sender)) {
+      knownAgents.set(sender, { messages: [], lastSeen: null });
+    }
+    const agent = knownAgents.get(sender);
+    const msgId = m.message_id || m.id || msgs.indexOf(m);
+    if (!agent.messages.find(x => (x.message_id || x.id) === msgId)) {
+      agent.messages.push(m);
+    }
+    agent.lastSeen = m.timestamp || new Date().toISOString();
+  }
+}
+
+function renderLog(msgs) {
+  const container = document.getElementById('logEntries');
+  document.getElementById('logCount').textContent = msgs.length + ' messages';
+
+  container.innerHTML = msgs.map((m, i) => {
+    const id = m.message_id || m.id || i;
+    const checked = checkedMessages.has(id);
+    const cat = m.category || '';
+    const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '--:--';
+    const sender = extractSender(m.content || '');
+    const content = m.content || '';
+    const pri = m.priority || 'normal';
+
+    return `<div class="log-entry ${cat} ${checked ? 'done' : ''}" data-id="${id}">
+      <div class="checkbox ${checked ? 'checked' : ''}" onclick="toggleCheck(${id})">
+        ${checked ? '&#10003;' : ''}
+      </div>
+      <div class="time">${time}</div>
+      <div class="sender" style="color:${senderColor(sender)}">${sender}</div>
+      <div class="msg">${escapeHtml(content)}</div>
+    </div>`;
+  }).reverse().join('');
+}
+
+function renderAgents() {
+  const container = document.getElementById('agentPanels');
+  document.getElementById('agentCount').textContent = knownAgents.size + ' agents';
+
+  let html = '';
+  for (const [name, data] of knownAgents) {
+    const recentMsgs = data.messages.slice(-5).reverse();
+    const lastTime = data.lastSeen ? new Date(data.lastSeen).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '?';
+    const isRecent = data.lastSeen && (Date.now() - new Date(data.lastSeen).getTime()) < 300000; // 5 min
+
+    html += `<div class="agent-card">
+      <div class="agent-header">
+        <span class="agent-name" style="color:${senderColor(name)}">${name}</span>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span style="font-size:10px;color:var(--dim);font-family:var(--mono);">Last: ${lastTime}</span>
+          <span class="agent-status ${isRecent ? '' : 'idle'}">${isRecent ? 'ACTIVE' : 'IDLE'}</span>
+          ${name !== 'DAVID' ? `<button onclick="openDM('${name}')" style="padding:3px 8px;background:var(--blue);color:#fff;border:none;border-radius:4px;font-size:10px;cursor:pointer;">DM</button>` : ''}
+        </div>
+      </div>
+      <div class="agent-messages">
+        ${recentMsgs.map(m => {
+          const t = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : '';
+          return `<div class="agent-msg"><span class="agent-msg-time">${t}</span>${escapeHtml(m.content || '')}</div>`;
+        }).join('') || '<div style="color:var(--dim);font-size:11px;padding:4px;">No messages yet</div>'}
+      </div>
+    </div>`;
+  }
+  container.innerHTML = html;
+}
+
+function extractSender(content) {
+  const fm = content.match(/^(FRIEND\s+\w+)/i);
+  if (fm) return fm[1].toUpperCase();
+  const dm = content.match(/^\[DAVID[^\]]*\]/i);
+  if (dm) return 'DAVID';
+  const nm = content.match(/^(\w[\w\s]{2,15})(?:\s+(?:COMPLETE|starting|DONE|reporting))/i);
+  if (nm) return nm[1].trim().toUpperCase();
+  return 'AGENT';
+}
+
+function senderColor(name) {
+  const colors = ['#4F8EF7','#2ecc8e','#e8a912','#9B7FE8','#4ac4d4','#F6821F','#f87171','#6e8efb'];
+  if (name === 'DAVID') return '#e8a912';
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function toggleCheck(id) {
+  if (checkedMessages.has(id)) checkedMessages.delete(id);
+  else checkedMessages.add(id);
+  localStorage.setItem('comms_checked', JSON.stringify([...checkedMessages]));
+  renderLog(allMessages);
+}
+
+async function sendBroadcast(mode) {
+  const input = document.getElementById('broadcastInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const payload = {
+    to: 'broadcast',
+    content: '[DAVID]: ' + msg,
+    priority: mode === 'interrupt' ? 'high' : 'normal',
+    category: mode
+  };
+
+  try {
+    await fetch(`${COMMS_URL}/channel/opus`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    input.value = '';
+    fetchMessages(); // refresh immediately
+  } catch(e) {
+    alert('Send failed: ' + e.message);
+  }
+}
+
+function openDM(agentName) {
+  dmTargetAgent = agentName;
+  document.getElementById('dmTarget').textContent = agentName;
+  document.getElementById('dmMessage').value = '';
+  document.getElementById('dmModal').classList.add('show');
+  document.getElementById('dmMessage').focus();
+}
+
+function closeDM() {
+  document.getElementById('dmModal').classList.remove('show');
+}
+
+async function sendDM() {
+  const msg = document.getElementById('dmMessage').value.trim();
+  if (!msg) return;
+
+  const payload = {
+    to: dmTargetAgent.toLowerCase(),
+    content: '[DAVID → ' + dmTargetAgent + ']: ' + msg,
+    priority: 'normal',
+    category: 'dm'
+  };
+
+  try {
+    await fetch(`${COMMS_URL}/channel/opus`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    closeDM();
+    fetchMessages();
+  } catch(e) {
+    alert('DM failed: ' + e.message);
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Keyboard shortcuts
+document.getElementById('broadcastInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.shiftKey) { sendBroadcast('interrupt'); e.preventDefault(); }
+  else if (e.key === 'Enter') { sendBroadcast('ding'); e.preventDefault(); }
+});
+
+document.getElementById('dmMessage').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { sendDM(); e.preventDefault(); }
+  if (e.key === 'Escape') closeDM();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeDM();
+});
+
+// Start polling
+fetchMessages();
+setInterval(fetchMessages, POLL_INTERVAL);
+</script>
+</body>
+</html>

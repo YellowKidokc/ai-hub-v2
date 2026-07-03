@@ -24,6 +24,9 @@
 ; Overnight Operations: Ollama YAML enrichment, batch analytics, knowledge graphs
 #include overnight_ops.ahk
 
+; Keep Going: safe "continue work" nudger (Ctrl+Alt+N / Ctrl+Alt+J)
+#include keepalive.ahk
+
 ; ClipSync Bridge: Dynamic hotkeys, HTML interfaces (Ctrl+Alt+P/L/S)
 ; Optional include (*i): the bridge folder may not be present in every checkout.
 ; Without *i, a missing file is a FATAL load error that stops the whole app.

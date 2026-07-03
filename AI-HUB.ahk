@@ -43,10 +43,17 @@ try {
     pyW := "C:\Users\lowes\AppData\Local\Programs\Python\Python312\pythonw.exe"
     pyC := "C:\Users\lowes\AppData\Local\Programs\Python\Python312\python.exe"
     bridgeScript := A_ScriptDir "\clipsync-bridge\sync_server.py"
-    if FileExist(pyW)
-        Run('"' pyW '" "' bridgeScript '"', , "Hide")
-    else if FileExist(pyC)
-        Run('"' pyC '" "' bridgeScript '"', , "Hide")
+    if !FileExist(bridgeScript)
+        bridgeScript := A_ScriptDir "\sync_server.py"
+
+    if FileExist(bridgeScript) {
+        if FileExist(pyW)
+            Run('"' pyW '" "' bridgeScript '"', , "Hide")
+        else if FileExist(pyC)
+            Run('"' pyC '" "' bridgeScript '"', , "Hide")
+        else
+            Run('pythonw.exe "' bridgeScript '"', , "Hide")
+    }
 }
 
 ; --- SUBPROCESS 2: ClipSync hotkeys/UI bridge (AHK) ---

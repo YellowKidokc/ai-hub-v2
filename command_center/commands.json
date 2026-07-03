@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "id": "preference.active_window.capture",
+      "title": "Capture Active Window Preference",
+      "category": "Preference Engine",
+      "type": "py",
+      "path": "{root}\\scripts\\py\\preference_capture.py",
+      "working_dir": "{root}",
+      "args": [],
+      "pass_context": true,
+      "risk": "safe",
+      "requires_confirm": false,
+      "show_console": false,
+      "close_picker": true,
+      "tags": ["preference", "like", "dislike", "active-window", "feedback"]
+    },
+    {
+      "id": "open.ai_hub_repo",
+      "title": "Open AI-HUB Repo",
+      "category": "Folders",
+      "type": "folder",
+      "path": "D:\\GitHub\\ai-hub-v2",
+      "risk": "safe",
+      "tags": ["ai-hub", "github", "repo"]
+    },
+    {
+      "id": "open.preference_engine_build",
+      "title": "Open Preference Engine Build",
+      "category": "Folders",
+      "type": "folder",
+      "path": "X:\\Preference Engine Build",
+      "risk": "safe",
+      "tags": ["preference", "engine", "x-drive"]
+    },
+    {
+      "id": "open.command_center_folder",
+      "title": "Open Command Center Folder",
+      "category": "Folders",
+      "type": "folder",
+      "path": "{root}",
+      "risk": "safe",
+      "tags": ["command-center", "launcher", "folder"]
+    },
+    {
+      "id": "open.ahk_review_folder",
+      "title": "Open AHK Review Folder",
+      "category": "Folders",
+      "type": "folder",
+      "path": "X:\\knowledge-refinery\\01_INTAKE\\ahk_aihub_command_picker_review_20260518",
+      "risk": "safe",
+      "tags": ["ahk", "review", "command-picker"]
+    },
+    {
+      "id": "open.question_chain_index",
+      "title": "Open Question Chain Index",
+      "category": "Theophysics",
+      "type": "app",
+      "path": "notepad.exe",
+      "args": [
+        "X:\\knowledge-refinery\\01_INTAKE\\cannon_math_proof_vectorize_20260518\\QUESTION_CHAIN_INDEX.md"
+      ],
+      "risk": "safe",
+      "show_console": false,
+      "tags": ["question-chain", "theophysics", "index"]
+    },
+    {
+      "id": "open.comms_hub",
+      "title": "Open Comms Hub",
+      "category": "Theophysics",
+      "type": "url",
+      "path": "https://comms.dlowehomelab.com",
+      "risk": "network",
+      "requires_confirm": false,
+      "tags": ["comms", "theophysics", "hub"]
+    }
+  ]
+}
+

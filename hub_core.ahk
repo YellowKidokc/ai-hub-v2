@@ -143,6 +143,7 @@ EnsureConfig() {
         defaultCfg .= "provider=OpenAI`n"
         defaultCfg .= "apiKey=`n"
         defaultCfg .= "openaiKey=`n"
+        defaultCfg .= "claudeKey=`n"
         defaultCfg .= "claudeEndpoint=https://api.anthropic.com/v1/messages`n"
         defaultCfg .= "openaiEndpoint=https://api.openai.com/v1/chat/completions`n"
         defaultCfg .= "claudeModel=claude-sonnet-4-20250514`n"
@@ -1733,6 +1734,7 @@ SaveSettings(*) {
     global gSavedX, gSavedY
     content := "[Settings]`n"
     content .= "provider=" gShell.providerDDL.Text "`n"
+    content .= "apiKey=" gShell.openaiKeyEdit.Value "`n"
     content .= "openaiKey=" gShell.openaiKeyEdit.Value "`n"
     content .= "claudeKey=" gShell.claudeKeyEdit.Value "`n"
     content .= "openaiModel=" gShell.openaiModelEdit.Value "`n"
@@ -1759,7 +1761,10 @@ LoadSettings() {
     try {
         provider := IniRead(CONFIG_FILE, "Settings", "provider", "OpenAI")
         gShell.providerDDL.Text := provider
-        gShell.openaiKeyEdit.Value := IniRead(CONFIG_FILE, "Settings", "openaiKey", "")
+        openaiKey := IniRead(CONFIG_FILE, "Settings", "openaiKey", "")
+        if openaiKey = ""
+            openaiKey := IniRead(CONFIG_FILE, "Settings", "apiKey", "")
+        gShell.openaiKeyEdit.Value := openaiKey
         gShell.claudeKeyEdit.Value := IniRead(CONFIG_FILE, "Settings", "claudeKey", "")
         gShell.openaiModelEdit.Value := IniRead(CONFIG_FILE, "Settings", "openaiModel", "gpt-4o-mini")
         gShell.claudeModelEdit.Value := IniRead(CONFIG_FILE, "Settings", "claudeModel", "claude-sonnet-4-20250514")

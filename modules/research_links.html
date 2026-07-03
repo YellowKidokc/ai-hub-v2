@@ -338,13 +338,13 @@ function render() {
         ${(b.tags||[]).map(t => `<span class="tag-pill">${esc(t)}</span>`).join('')}
       </div>
       <div class="card-actions">
-        <button class="action-btn open" onclick="event.stopPropagation();window.open('${esc(b.url)}','_blank')">
+        <button class="action-btn open" onclick="event.stopPropagation();window.open('${escA(b.url)}','_blank')">
           <span class="icon">🔗</span> OPEN
         </button>
-        <button class="action-btn copy" onclick="event.stopPropagation();copyUrl('${esc(b.url)}')">
+        <button class="action-btn copy" onclick="event.stopPropagation();copyUrl('${escA(b.url)}')">
           <span class="icon">📋</span> COPY
         </button>
-        <button class="action-btn edit" onclick="event.stopPropagation();openEditModal('${b.id}')">
+        <button class="action-btn edit" onclick="event.stopPropagation();openEditModal('${escA(b.id)}')">
           <span class="icon">✏️</span>
         </button>
         <button class="action-btn delete" onclick="event.stopPropagation();deleteBookmark('${b.id}')">
@@ -430,6 +430,8 @@ async function saveBookmark() {
 }
 
 function esc(s) { if(!s)return''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+// Safe for a single-quoted JS string inside an HTML onclick="" attribute
+function escA(s){ if(!s)return''; return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 async function saveBridgeExport(items, filename) {
   const payload = {
     generated_at: new Date().toISOString(),

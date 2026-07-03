@@ -540,17 +540,22 @@ body.collapsed .sb-footer span{display:none;}
 
 <script>
 // ═══════ NAVIGATION ═══════
-function go(view) {
+function goCore(view) {
+  const item = document.querySelector(`.sb-item[data-view="${view}"]`);
+  const panel = document.getElementById('v-' + view);
+  if (!item || !panel) return; // unknown view — ignore
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
-  document.querySelector(`.sb-item[data-view="${view}"]`).classList.add('active');
+  item.classList.add('active');
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('v-' + view).classList.add('active');
+  panel.classList.add('active');
   localStorage.setItem('nexus-view', view);
 }
 
-// Restore last view
-const saved = localStorage.getItem('nexus-view');
-if (saved) { try { go(saved); } catch(e) {} }
+// Public navigation entry point — also closes the mobile sidebar
+function go(view) {
+  goCore(view);
+  if (window.innerWidth <= 768) closeSidebar();
+}
 
 // ═══════ SIDEBAR TOGGLE ═══════
 function toggleSidebar() {
@@ -565,12 +570,9 @@ function closeSidebar() { document.body.classList.remove('sb-open'); }
 // Restore collapsed state (desktop only)
 if (localStorage.getItem('nexus-collapsed') === 'true' && window.innerWidth > 768) document.body.classList.add('collapsed');
 
-// Close sidebar on mobile after navigating
-const origGo = go;
-function go(v) {
-  origGo(v);
-  if (window.innerWidth <= 768) closeSidebar();
-}
+// Restore last view (after go/closeSidebar are defined)
+const saved = localStorage.getItem('nexus-view');
+if (saved) { try { goCore(saved); } catch(e) {} }
 
 // ═══════ CLOCK ═══════
 function tick() {

@@ -1660,46 +1660,87 @@ DeleteDataEntry(*) {
 
 BuildSettingsTab() {
     global gShell
-    gShell.gui.Add("Text", "xm+15 ym+50 c" DARK_TEXT, "AI Provider")
-    gShell.gui.SetFont("s10", "Segoe UI")
 
-    gShell.gui.Add("Text", "xm+15 y+15 c" DARK_TEXT, "Provider:")
-    gShell.providerDDL := gShell.gui.Add("DropDownList", "x+20 w150 Choose1", ["OpenAI", "Claude"])
+    ; ============ HEADER ============
+    gShell.gui.SetFont("s13 Bold c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 ym+45", "AI Provider && API Keys")
+    gShell.gui.SetFont("s9 Norm c888888", "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+7 w640", "The Active Provider is used for every AI action (Smart Fix, Quick Chat, Prompt Menu). "
+        . "Each key is locked to its provider — a key that belongs to a different service is rejected on Save.")
+
+    ; ============ ACTIVE PROVIDER ============
+    gShell.gui.SetFont("s10 Bold c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+18", "Active Provider")
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
+    gShell.providerDDL := gShell.gui.Add("DropDownList", "xm+15 y+8 w220 Choose1", ["OpenAI", "Claude"])
     ApplyDarkTheme(gShell.providerDDL)
     ApplyInputTheme(gShell.providerDDL)
 
-    gShell.gui.Add("Text", "xm+15 y+25 c" DARK_TEXT, "--- OpenAI Settings ---")
-    gShell.gui.Add("Text", "xm+15 y+12 c" DARK_TEXT, "OpenAI Key:")
-    gShell.openaiKeyEdit := gShell.gui.Add("Edit", "x+20 w450 Password", "")
+    ; ============ OPENAI-COMPATIBLE ============
+    gShell.gui.SetFont("s10 Bold c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+22", "OpenAI-Compatible")
+    gShell.gui.SetFont("s8 Norm c888888", "Segoe UI")
+    gShell.gui.Add("Text", "x+10 yp+4", "OpenAI · Codex · local · OpenRouter")
+
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+14 w120", "API Key")
+    gShell.openaiKeyEdit := gShell.gui.Add("Edit", "xm+140 yp-3 w450 Password", "")
     ApplyDarkTheme(gShell.openaiKeyEdit)
     ApplyInputTheme(gShell.openaiKeyEdit)
+    gShell.gui.SetFont("s8 c888888")
+    gShell.gui.Add("Text", "xm+140 y+3", "Must start with  sk-")
 
-    gShell.gui.Add("Text", "xm+15 y+10 c" DARK_TEXT, "OpenAI Model:")
-    gShell.openaiModelEdit := gShell.gui.Add("Edit", "x+5 w200", "gpt-4o-mini")
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+11 w120", "Endpoint / Route")
+    gShell.openaiEndpointEdit := gShell.gui.Add("Edit", "xm+140 yp-3 w450", "https://api.openai.com/v1/chat/completions")
+    ApplyDarkTheme(gShell.openaiEndpointEdit)
+    ApplyInputTheme(gShell.openaiEndpointEdit)
+
+    gShell.gui.Add("Text", "xm+15 y+11 w120", "Model")
+    gShell.openaiModelEdit := gShell.gui.Add("Edit", "xm+140 yp-3 w220", "gpt-4o-mini")
     ApplyDarkTheme(gShell.openaiModelEdit)
     ApplyInputTheme(gShell.openaiModelEdit)
-    gShell.gui.Add("Text", "x+10 c888888", "(gpt-4o-mini is cheapest)")
+    gShell.gui.SetFont("s8 c888888")
+    gShell.gui.Add("Text", "x+12 yp+3", "gpt-4o-mini is cheapest")
 
-    gShell.gui.Add("Text", "xm+15 y+25 c" DARK_TEXT, "--- Claude Settings ---")
-    gShell.gui.Add("Text", "xm+15 y+12 c" DARK_TEXT, "Claude Key:")
-    gShell.claudeKeyEdit := gShell.gui.Add("Edit", "x+25 w450 Password", "")
+    ; ============ CLAUDE (ANTHROPIC) ============
+    gShell.gui.SetFont("s10 Bold c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+24", "Claude")
+    gShell.gui.SetFont("s8 Norm c888888", "Segoe UI")
+    gShell.gui.Add("Text", "x+10 yp+4", "Anthropic")
+
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+14 w120", "API Key")
+    gShell.claudeKeyEdit := gShell.gui.Add("Edit", "xm+140 yp-3 w450 Password", "")
     ApplyDarkTheme(gShell.claudeKeyEdit)
     ApplyInputTheme(gShell.claudeKeyEdit)
+    gShell.gui.SetFont("s8 c888888")
+    gShell.gui.Add("Text", "xm+140 y+3", "Must start with  sk-ant-")
 
-    gShell.gui.Add("Text", "xm+15 y+10 c" DARK_TEXT, "Claude Model:")
-    gShell.claudeModelEdit := gShell.gui.Add("Edit", "x+10 w250", "claude-sonnet-4-20250514")
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+11 w120", "Endpoint / Route")
+    gShell.claudeEndpointEdit := gShell.gui.Add("Edit", "xm+140 yp-3 w450", "https://api.anthropic.com/v1/messages")
+    ApplyDarkTheme(gShell.claudeEndpointEdit)
+    ApplyInputTheme(gShell.claudeEndpointEdit)
+
+    gShell.gui.Add("Text", "xm+15 y+11 w120", "Model")
+    gShell.claudeModelEdit := gShell.gui.Add("Edit", "xm+140 yp-3 w280", "claude-sonnet-4-20250514")
     ApplyDarkTheme(gShell.claudeModelEdit)
     ApplyInputTheme(gShell.claudeModelEdit)
 
-    gShell.btnSaveSettings := gShell.gui.Add("Button", "xm+15 y+30 w120", "Save Settings")
+    ; ============ ACTIONS ============
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
+    gShell.btnSaveSettings := gShell.gui.Add("Button", "xm+15 y+26 w130", "Save Settings")
     gShell.btnSaveSettings.OnEvent("Click", (*) => SaveSettings())
     ApplyDarkTheme(gShell.btnSaveSettings)
 
-    gShell.btnTestAPI := gShell.gui.Add("Button", "x+10 w120", "Test API")
+    gShell.btnTestAPI := gShell.gui.Add("Button", "x+10 w130", "Test API")
     gShell.btnTestAPI.OnEvent("Click", (*) => TestAPIConnection())
     ApplyDarkTheme(gShell.btnTestAPI)
 
-    gShell.gui.Add("Text", "xm+15 y+40 c" DARK_TEXT, "Global Hotkeys")
+    gShell.gui.SetFont("s11 Bold c" DARK_TEXT, "Segoe UI")
+    gShell.gui.Add("Text", "xm+15 y+34", "Global Hotkeys")
+    gShell.gui.SetFont("s9 Norm c" DARK_TEXT, "Segoe UI")
     gShell.gui.Add("Text", "xm+15 y+15 c888888", "Ctrl+Alt+Z         PROMPT MENU (select text, pick action)")
     gShell.gui.Add("Text", "xm+15 y+8 c888888", "Ctrl+Space         Smart Fix (select all, fix everything)")
     gShell.gui.Add("Text", "xm+15 y+8 c888888", "Ctrl+Alt+G         Show/Hide AI-HUB window")
@@ -1728,15 +1769,65 @@ BuildSettingsTab() {
     ApplyDarkTheme(gShell.btnClearPrompts)
 }
 
+; Identify which service an API key belongs to by its prefix.
+DetectKeyProvider(key) {
+    key := Trim(key)
+    if key = ""
+        return "Empty"
+    if InStr(key, "sk-ant-") = 1
+        return "Claude"
+    if InStr(key, "AIza") = 1
+        return "Gemini"
+    if InStr(key, "sk-") = 1
+        return "OpenAI"
+    return "Unknown"
+}
+
+; Provider-lock: make sure a key is being saved into the slot it belongs to.
+; Returns true if it's OK to save, false to abort. An empty key is always OK
+; (just unconfigured), and an unrecognized prefix is allowed (local / custom
+; endpoints can use arbitrary tokens) after a soft confirm.
+ValidateProviderKey(key, expected) {
+    key := Trim(key)
+    if key = ""
+        return true
+    detected := DetectKeyProvider(key)
+    if detected = expected
+        return true
+
+    prefixes := Map("OpenAI", "sk-", "Claude", "sk-ant-", "Gemini", "AIza")
+    if detected = "Unknown" {
+        msg := "This key doesn't match a known provider prefix.`n`n"
+             . "You're saving it as the " expected " key. If this is a local or custom "
+             . "endpoint that's fine — otherwise double-check it.`n`nSave it anyway?"
+        return MsgBox(msg, "Unrecognized key", "YesNo Icon!") = "Yes"
+    }
+
+    msg := "This looks like a " detected " key, but you're saving it as the " expected " key.`n`n"
+         . expected " keys start with `"" prefixes[expected] "`".`n"
+         . detected " keys start with `"" prefixes.Get(detected, "?") "`".`n`n"
+         . "Keys are locked to their provider to prevent mix-ups. Save it anyway?"
+    return MsgBox(msg, "Key belongs to " detected, "YesNo Icon!") = "Yes"
+}
+
 SaveSettings(*) {
     global gShell, CONFIG_FILE, gAlwaysOnTop, gRememberPos
     global gSaveMarkdownAutoEnabled, gSaveMarkdownAsEnabled
     global gSavedX, gSavedY
+
+    ; ---- Provider-lock: reject a key that belongs to a different service ----
+    if !ValidateProviderKey(gShell.openaiKeyEdit.Value, "OpenAI")
+        return
+    if !ValidateProviderKey(gShell.claudeKeyEdit.Value, "Claude")
+        return
+
     content := "[Settings]`n"
     content .= "provider=" gShell.providerDDL.Text "`n"
     content .= "apiKey=" gShell.openaiKeyEdit.Value "`n"
     content .= "openaiKey=" gShell.openaiKeyEdit.Value "`n"
     content .= "claudeKey=" gShell.claudeKeyEdit.Value "`n"
+    content .= "openaiEndpoint=" Trim(gShell.openaiEndpointEdit.Value) "`n"
+    content .= "claudeEndpoint=" Trim(gShell.claudeEndpointEdit.Value) "`n"
     content .= "openaiModel=" gShell.openaiModelEdit.Value "`n"
     content .= "claudeModel=" gShell.claudeModelEdit.Value "`n"
     content .= "`n[Utilities]`n"
@@ -1766,6 +1857,8 @@ LoadSettings() {
             openaiKey := IniRead(CONFIG_FILE, "Settings", "apiKey", "")
         gShell.openaiKeyEdit.Value := openaiKey
         gShell.claudeKeyEdit.Value := IniRead(CONFIG_FILE, "Settings", "claudeKey", "")
+        gShell.openaiEndpointEdit.Value := IniRead(CONFIG_FILE, "Settings", "openaiEndpoint", "https://api.openai.com/v1/chat/completions")
+        gShell.claudeEndpointEdit.Value := IniRead(CONFIG_FILE, "Settings", "claudeEndpoint", "https://api.anthropic.com/v1/messages")
         gShell.openaiModelEdit.Value := IniRead(CONFIG_FILE, "Settings", "openaiModel", "gpt-4o-mini")
         gShell.claudeModelEdit.Value := IniRead(CONFIG_FILE, "Settings", "claudeModel", "claude-sonnet-4-20250514")
     }
@@ -1779,7 +1872,7 @@ LoadSettings() {
         gSavedY := IniRead(CONFIG_FILE, "Utilities", "savedY", "")
         ; Apply always-on-top if it was saved on
         if gAlwaysOnTop {
-            WinSetAlwaysOnTop("On", "ahk_id " gShell.gui.Hwnd)
+            WinSetAlwaysOnTop(1, "ahk_id " gShell.gui.Hwnd)
             try A_TrayMenu.Check("Always On Top")
         }
         ; Sync Utilities tab checkboxes if they exist
@@ -1875,9 +1968,12 @@ CallOpenAI(prompt, history, sysPrompt := "") {
     global gShell
     apiKey := ""
     model := "gpt-4o-mini"
+    endpoint := "https://api.openai.com/v1/chat/completions"
     try {
         apiKey := gShell.openaiKeyEdit.Value
         model := gShell.openaiModelEdit.Value
+        if Trim(gShell.openaiEndpointEdit.Value) != ""
+            endpoint := Trim(gShell.openaiEndpointEdit.Value)
     }
     if apiKey = ""
         return "Please configure your OpenAI API key in Settings."
@@ -1898,7 +1994,7 @@ CallOpenAI(prompt, history, sysPrompt := "") {
 
     try {
         whr := ComObject("WinHttp.WinHttpRequest.5.1")
-        whr.Open("POST", "https://api.openai.com/v1/chat/completions", true)
+        whr.Open("POST", endpoint, true)
         whr.SetRequestHeader("Content-Type", "application/json")
         whr.SetRequestHeader("Authorization", "Bearer " apiKey)
         whr.Send(body)
@@ -1921,9 +2017,12 @@ CallClaude(prompt, history, sysPrompt := "") {
     global gShell
     apiKey := ""
     model := "claude-sonnet-4-20250514"
+    endpoint := "https://api.anthropic.com/v1/messages"
     try {
         apiKey := gShell.claudeKeyEdit.Value
         model := gShell.claudeModelEdit.Value
+        if Trim(gShell.claudeEndpointEdit.Value) != ""
+            endpoint := Trim(gShell.claudeEndpointEdit.Value)
     }
     if apiKey = ""
         return "Please configure your Claude API key in Settings."
@@ -1946,7 +2045,7 @@ CallClaude(prompt, history, sysPrompt := "") {
 
     try {
         whr := ComObject("WinHttp.WinHttpRequest.5.1")
-        whr.Open("POST", "https://api.anthropic.com/v1/messages", true)
+        whr.Open("POST", endpoint, true)
         whr.SetRequestHeader("Content-Type", "application/json")
         whr.SetRequestHeader("x-api-key", apiKey)
         whr.SetRequestHeader("anthropic-version", "2023-06-01")

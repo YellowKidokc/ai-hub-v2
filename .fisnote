@@ -1,0 +1,29 @@
+---
+fis_schema: "folder-index.v1"
+folder_id: "FLD-20260708-79d1b370"
+folder: "GitHub\ai-hub-v2"
+folder_class: "project"
+confidence: 0.6
+dependency_risk: 0.333
+dominant_family: "code"
+dominant_ratio: 0.667
+file_count: 9
+classified_at: "2026-07-08T22:48:25"
+allowed_actions: ["index", "rename_internal", "subfolder_sort", "archive_exports"]
+suggested_name: "ai-hub-v2"
+system_markers: ["dir:.git"]
+---
+
+# FIS Folder Index: ai-hub-v2
+
+**Class**: project  ·  **Confidence**: 60%  ·  **Files**: 9  ·  **Dominant**: code (67%)
+
+## Allowed actions
+- index
+- rename_internal
+- subfolder_sort
+- archive_exports
+
+**Suggested name**: `ai-hub-v2`  (not applied — review before use)
+
+<!-- FIS folder-index.v1: parseable note; safe to regenerate. -->

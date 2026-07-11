@@ -130,3 +130,38 @@ MIT — do whatever you want with it.
 ## Author
 
 David Lanzas — [Theophysics Project](https://theophysics.pro) — Moore, Oklahoma
+
+## LLM Control Overlay
+
+`LLMControlOverlay.ahk` is a standalone AutoHotkey v2 control overlay for desktop LLM applications. It lets you bind to a target app window, keeps the overlay positioned using target-client-area-relative geometry, and stores per-profile settings in `config/llm_overlay.ini`.
+
+### Overlay setup
+
+1. Install AutoHotkey v2.0 or later.
+2. Run `LLMControlOverlay.ahk`.
+3. Click **Bind to Window**, then click the desktop LLM application window.
+4. Use **Calibrate** to save target controls such as `prompt`, `submit`, or `stop`; calibration stores normalized client-area coordinates so clicks continue to work after resizing.
+5. Open **Settings** to configure target executable/title pattern, API endpoint, API key, model, overlay opacity, button labels, button action specs, and hotkeys.
+
+### Button action specs
+
+Button entries use INI lines like `Submit=type=shortcut|value=^Enter`. Supported action types are `text`, `shortcut`, `controlclick`, `api`, `function`, and `clipboardsubmit`. UI interaction tries text/control methods first and uses calibrated window-relative coordinates as a fallback; it never requires absolute screen coordinates.
+
+### UI Automation notes
+
+Desktop LLM applications expose different UI Automation identifiers. The overlay includes an **Inspect** button and calibration mode to collect HWND, class, control, title, and normalized coordinates. For richer identifiers such as AutomationId, Name, and ClassName, inspect the target app with Microsoft Inspect.exe or Accessibility Insights and store those values in `config/llm_overlay.ini` alongside the calibrated control entry.
+
+## Mattermost Dispatch Panel
+
+`MattermostOverlay.ahk` is the Phase 1 API-only dispatch panel for the local Mattermost hub at `http://192.168.1.93:8065`. It uses native `WinHttp.WinHttpRequest.5.1` COM calls instead of curl, resolves configured channel IDs once at startup, and posts clipboard or typed messages with the prefix `[David via Overlay | HH:mm]`.
+
+### Mattermost setup
+
+1. Copy `config/mm_config.example.ini` to `config/mm_config.ini`.
+2. Set `BotToken` to the Mattermost bot PAT and `TeamID` to the Mattermost team ID.
+3. Run `MattermostOverlay.ahk` with AutoHotkey v2.
+4. Test with **Session Logs** first; use **Broadcast** only after channel resolution succeeds.
+
+### Mattermost actions
+
+The panel includes buttons for **Session Logs**, **Codex Lab**, **Broadcast**, **Check Unread**, **Read Last 5**, and **Input Box**. Errors are non-blocking and shown in the status bar as `HUB OFFLINE`, `AUTH FAILED`, or `CHANNEL NOT FOUND` where applicable.

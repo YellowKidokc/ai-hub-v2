@@ -388,18 +388,18 @@ class ActionDispatcher {
             return
         spec := this.Store.ParseSpec(this.Store.Buttons[label])
         try {
-            type := spec.Has("type") ? spec["type"] : "shortcut"
-            if type = "text"
+            actionType := spec.Has("type") ? spec["type"] : "shortcut"
+            if actionType = "text"
                 this.SendText(spec.Get("value", ""))
-            else if type = "shortcut"
+            else if actionType = "shortcut"
                 this.SendShortcut(spec.Get("value", ""))
-            else if type = "controlclick"
+            else if actionType = "controlclick"
                 CoordinateFallback(this.Tracker, this.Log).ClickControl(spec.Get("control", ""))
-            else if type = "api"
+            else if actionType = "api"
                 this.Api.Post(spec.Get("value", "/v1/chat/completions"), A_Clipboard)
-            else if type = "function"
+            else if actionType = "function"
                 this.CallFunction(spec.Get("value", ""))
-            else if type = "clipboardsubmit"
+            else if actionType = "clipboardsubmit"
                 this.SendText(this.GetClipboardText()), this.SendShortcut("^Enter")
             App.Overlay.SetStatus("Ran: " label, "ok")
         } catch as e {

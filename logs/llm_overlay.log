@@ -1,0 +1,21 @@
+﻿2026-07-11 01:32:39 [INFO] LLM overlay started
+2026-07-11 01:32:58 [INFO] Bound to hwnd=29627908 process=explorer.exe
+2026-07-11 01:33:07 [INFO] Bound to hwnd=29627908 process=explorer.exe
+2026-07-11 01:33:11 [INFO] Bound to hwnd=29627908 process=explorer.exe
+2026-07-11 01:33:36 [INFO] Bound to hwnd=29627908 process=explorer.exe
+2026-07-11 01:33:59 [INFO] Inspect: hwnd:1119120,class:AutoHotkeyGUI,control:856924,title:LLM Control Overlay
+2026-07-11 01:34:13 [ERROR] Action failed: Custom Action 1 - Invalid API key=***
+2026-07-11 01:34:21 [ERROR] Action failed: Stop Generation - Control not calibrated: stop
+2026-07-11 01:34:23 [ERROR] Action failed: Custom Action 2 - Clipboard unavailable or empty
+2026-07-11 01:34:27 [INFO] Bound to hwnd=132282 process=claude.exe
+2026-07-11 01:34:42 [INFO] Bound to hwnd=132282 process=claude.exe
+2026-07-11 01:37:20 [INFO] LLM overlay started
+2026-07-11 01:37:53 [INFO] LLM overlay started
+2026-07-11 01:39:03 [INFO] LLM overlay started
+2026-07-11 01:40:49 [INFO] LLM overlay started
+2026-07-11 01:42:40 [INFO] LLM overlay started
+2026-07-11 01:42:49 [INFO] LLM overlay started
+2026-07-11 01:42:54 [INFO] LLM overlay started
+2026-07-11 01:43:21 [INFO] Bound to hwnd=10950688 process=WindowsTerminal.exe
+2026-07-11 02:10:43 [INFO] LLM overlay started
+2026-07-11 02:11:07 [INFO] LLM overlay started

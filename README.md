@@ -14,6 +14,8 @@ A desktop productivity system built on AutoHotkey v2 that integrates clipboard m
 
 **Hotkeys & Hotstrings** — Full engine with categories, live editing, import/export, and a visual manager.
 
+**Keep Going** — A safe "continue work" nudger. Pastes (or, if you explicitly enable auto-send, sends) a prompt into a target AI window on an interval. Auto-send is OFF by default, with a live countdown, a per-session send cap, and an always-available Stop.
+
 **BetterTTS** — Text-to-speech tools including OCR reader, voice search, and screen highlighting.
 
 ## Architecture
@@ -85,6 +87,9 @@ The Python bridge server on `localhost:3456` is the nervous system. It connects 
 | `Ctrl+Alt+C` | Open Clipboard v2 |
 | `Ctrl+Alt+S` | Server Status |
 | `Ctrl+Alt+W` | Toggle Always On Top |
+| `Ctrl+Alt+N` | Keep Going: Nudge Now (paste/send prompt to target) |
+| `Ctrl+Alt+J` | Keep Going: Start/Stop the interval loop |
+| `Ctrl+Alt+Shift+J` | Keep Going: Emergency Stop |
 | `Ctrl+Shift+V` | Toggle Clipboard Manager |
 | `Ctrl+Shift+1-0` | Paste from clipboard slots 1-10 |
 | `Ctrl+Alt+1-0` | Paste from clipboard slots 11-20 |

@@ -44,7 +44,7 @@ Build_UtilitiesTab() {
 
     ; ---- Save Markdown to Downloads ----
     gShell.gui.Add("Text", "xm+15 y+35 c" DARK_TEXT, "Quick Save Markdown")
-    gShell.gui.Add("Text", "xm+15 y+5 c888888", "Save selection as .md to Downloads folder.  Hotkey: Ctrl+Alt+A")
+    gShell.gui.Add("Text", "xm+15 y+5 c888888", "Save selection as .md to Downloads folder.  Hotkey: Ctrl+Shift+Q")
 
     gShell.chkSaveMdAuto := gShell.gui.Add("CheckBox", "xm+350 yp-18 c" DARK_TEXT, "ON")
     gShell.chkSaveMdAuto.Value := gSaveMarkdownAutoEnabled ? 1 : 0
@@ -52,7 +52,7 @@ Build_UtilitiesTab() {
 
     ; ---- Save Markdown with Save As ----
     gShell.gui.Add("Text", "xm+15 y+35 c" DARK_TEXT, "Save Markdown As...")
-    gShell.gui.Add("Text", "xm+15 y+5 c888888", "Save selection as .md with folder picker.  Hotkey: Ctrl+Alt+D")
+    gShell.gui.Add("Text", "xm+15 y+5 c888888", "Save selection as .md with folder picker.  Hotkey: Ctrl+Shift+W")
 
     gShell.chkSaveMdAs := gShell.gui.Add("CheckBox", "xm+350 yp-18 c" DARK_TEXT, "ON")
     gShell.chkSaveMdAs.Value := gSaveMarkdownAsEnabled ? 1 : 0

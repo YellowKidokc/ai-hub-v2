@@ -12,7 +12,7 @@ global SYNC_FILES := ["hotkeys.ini", "hotstrings.sav", "settings.ini", "prompts.
 
 ; Clipboard data files (in clipsync-bridge/data/)
 global SYNC_CLIP_FILES := ["clips.json", "bookmarks.json", "prompts.json"]
-global CLIP_DATA_DIR := A_ScriptDir "\..\clipsync-bridge\data"
+global CLIP_DATA_DIR := A_ScriptDir "\clipsync-bridge\data"
 
 ; Import: if sync copy is newer than local, overwrite local
 Sync_Import() {
